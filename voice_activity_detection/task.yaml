@@ -1,0 +1,60 @@
+task_description:
+  type: Voice Activity Detection
+  description: The application performs voice activity detection (VAD), identifying segments of an audio signal that contain human speech. The system filters out noise and non-speech portions to isolate only the parts where human voice is present, regardless of background disturbances.
+  input: An audio file (.wav, .flac) that contains human speech possibly mixed with noise or silence.
+  output: A list of timestamped segments indicating where speech is detected within the input audio file.
+
+  visualize:
+    description: |
+      Display a waveform view of the audio file with highlighted regions that contain human speech. Each data item includes:
+        - The original audio clip.
+        - A visual indicator (e.g., colored overlay) showing the time intervals where speech is detected.
+        - A list of start and end timestamps for each speech segment.
+    features:
+      - list_display:
+          description: Show a list of audio clips along with their detected speech segments.
+          fields:
+            - audio_clip: The input audio file.
+            - speech_segments: A list of [start_time, end_time] pairs where speech was detected.
+            - waveform_preview: A visual waveform with highlighted speech regions.
+      - input_function:
+          description: Allow users to upload their own audio files to perform voice activity detection.
+          steps:
+            - Upload an audio file containing speech.
+            - Process the audio using the VAD model to detect speech segments.
+            - Display the speech-only regions with timestamped intervals and waveform visualization.
+
+model_information:
+  api_url: "http://34.142.220.207:8008/api/voice-activity-detection"
+  name: pyannote/segmentation-3.0
+  description: pyannote/segmentation-3.0 is a speech activity segmentation model that detects human speech regions in an audio recording. It is trained on diverse multilingual speech corpora and is designed for high-accuracy voice activity detection in real-world scenarios with noise and overlapping speech.
+  input_format: 
+    type: json
+    description: Audio data and sampling rate read from audio file by using some popular libraries, such as librosa, soundfile.
+    structure:
+      audio_data: 
+        type: List[float]
+        description: Audio data read from audio file
+      sampling_rate:
+        type: int
+        description: Sampling rate is the number of audio samples captured per second when converting an analog audio signal into a digital one.
+  output_format: 
+    description: A list of audio segments (e.g., with start and end timestamps) where speech was detected. Each segment includes start time, end time and corresponding label (detected or not).
+    type: List[dict]
+    structure:
+      start: 
+        type: float
+        description: Start time in seconds.
+      end: 
+        type: float
+        description: End time in seconds.
+  parameters:
+    duration: 10.0
+    sample_rate: 16000
+
+dataset_description:
+  description: The AMI Meeting Corpus consists of 100 hours of meeting recordings. The recordings use a range of signals synchronized to a common timeline. These include close-talking and far-field microphones, individual and room-view video cameras, and output from a slide projector and an electronic whiteboard. During the meetings, the participants also have unsynchronized pens available to them that record what is written. The meetings were recorded in English using three different rooms with different acoustic properties, and include mostly non-native speakers.
+  data_source: ./data/voice_activity_detection.csv file contains file_path to .wav file and corresponding text transcript.
+  data_format: .wav file.
+  additional_description: |
+    - Each .wav file is in ./data/voice folder.

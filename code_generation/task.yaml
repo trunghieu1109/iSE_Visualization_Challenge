@@ -1,0 +1,61 @@
+task_description:
+  type: Code Generation
+  description: This task involves generating Python source code to solve basic programming problems described in natural language. The goal is to produce a correct and efficient Python function that fulfills the specified requirements and adheres to standard coding practices.
+  input: A natural language prompt that clearly states a programming problem. The task typically requires implementing a specific function with defined behavior, constraints, and input-output specifications.
+  output: A syntactically correct and semantically accurate Python function that successfully solves the given problem and passes all relevant test cases.
+
+visualize:
+  description: |
+    Display the programming problem requirement along with the generated code solution.
+    Specifically, you must show:
+      - The input requirement describing the programming task.
+      - The generated Python code solving the task.
+      - A list of test cases for verifying the code.
+      - The execution result of each test case indicating pass or fail, including error messages if any.
+  features:
+    - requirement_display:
+        description: Show the input requirement describing the programming task.
+        fields:
+          - requirement_text: The natural language description of the task.
+    - code_display:
+        description: Show the generated Python code for the given requirement.
+        fields:
+          - generated_code: The Python function or script generated to solve the problem.
+    - test_cases_display:
+        description: Display the list of test cases used to validate the generated code. Then show the results of running each test case, including pass/fail status and error details if applicable.
+        fields:
+          - test_input: Input arguments for the test case.
+          - expected_output: Expected result of the test case.
+          - actual_output: Output produced by the generated code.
+          - pass_fail: Status indicating whether the test passed or failed.
+          - error_message: Error traceback or message if the test failed.
+
+model_information:
+  api_url: "http://34.142.220.207:8008/api/code-generation"
+  name: Salesforce/codegen-350M-mono
+  description: CodeGen is a family of autoregressive language models for program synthesis from the paper "A Conversational Paradigm for Program Synthesis" by Erik Nijkamp, Bo Pang, Hiroaki Hayashi, Lifu Tu, Huan Wang, Yingbo Zhou, Silvio Savarese, Caiming Xiong. The models are originally released in this repository, under 3 pre-training data variants (NL, Multi, Mono) and 4 model size variants (350M, 2B, 6B, 16B).
+  input_format:
+    type: json
+    structure:
+      prompt: 
+        type: string
+        description: A natural language instruction or prompt describing a programming task to be solved.
+      entry_point:
+        type: string
+        description: The entry_point of generated function.
+  output_format:
+    description: The generated code corresponding to natural language instruction and entry_point
+    type: string
+
+dataset_description:
+  description: MBPP is a dataset consisting of about 1,000 mostly basic Python programming problems, each with a natural language description, starter code, and a reference solution. It is designed for evaluating code generation models.
+  data_source: ./data/mbpp.jsonl
+  data_format:
+    task_id: Unique identifier of the programming problem (integer).
+    text: The natural language description of the programming task/problem.
+    code: The reference Python code solution to the problem.
+    test_setup_code: (Optional) Any setup code needed before running the tests, usually empty.
+    test_list: 
+      - List of strings, each is a Python assertion statement to test correctness of the solution.
+    challenge_test_list: 
+      - List of additional, usually more difficult or edge-case test assertions (often empty in samples).

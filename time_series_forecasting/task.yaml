@@ -1,0 +1,92 @@
+task_description:
+  type: Time Series Forecasting
+  description: The application performs time series forecasting by analyzing historical data with multiple fields recorded at continuous time intervals to predict future values of these fields. The system leverages patterns and trends in the input time series to generate accurate forecasts for specified future time steps.
+  input: A structured time series dataset (e.g., CSV, Parquet) containing multiple fields (variables) recorded at regular time intervals. Each record includes a timestamp and one or more numerical or categorical fields representing measured values over time.
+  output: A forecasted time series dataset containing predicted values for the specified fields over future time intervals. The output preserves the structure of the input, with timestamps for the forecast horizon and corresponding predicted values for each field.
+
+  visualize:
+    description: >
+      The application provides two main groups of visualization features:
+        1. For provided sample datasets, the system displays a table containing both the original historical data and the predicted future values for each field. For every field, the application generates charts that show both the historical trends and the forecasted trends, allowing users to easily compare past and future values.
+        2. The system allows users to upload their own time series tables (in .csv or .parquet format). After uploading, the data is processed and visualized in the same way as the sample datasets, including both tabular and chart-based visualizations for each field.
+    features:
+      - sample_data_display:
+          description: >
+            Display available sample datasets with both historical values and near-future predicted values in a single table. For each field, provide visual charts illustrating the trend of historical data and the forecasted trend for future periods.
+          fields:
+            - data_table: Combined table of historical and predicted values for each field.
+            - field_charts: Line or area charts for each field, showing both past and future trends.
+      - user_upload:
+          description: >
+            Allow users to upload their own time series data files (.csv, .parquet). The uploaded data is processed and displayed with the same features as the sample datasets, including combined tables and trend charts for each field.
+          steps:
+            - Upload a time series file (CSV or Parquet) containing historical data with timestamps and multiple fields.
+            - Specify the forecast horizon (number of future time steps to predict).
+            - Display a combined table of the input and forecasted data.
+            - Generate charts for each field showing historical and predicted trends.
+
+model_information:
+  api_url: "http://34.142.220.207:8008/api/time-series-forecasting"
+  name: amazon/chronos-t5-base
+  description: >
+    Chronos is a family of pretrained time series forecasting models based on language model architectures. A time series is transformed into a sequence of tokens via scaling and quantization, and a language model is trained on these tokens using the cross-entropy loss.
+  input_format: 
+    type: json
+    structure:
+      table: 
+        description: A dataframe of time-series data provided to predict.
+        type: json
+        structure:
+          columns: 
+            type: List[str]
+            description: header
+          data: 
+            type: List[List[Any]]
+            description: data
+      field_names:
+        description: A list of column names in the table for which predictions are required.
+        type: List[str]
+      prediction_length:
+        description: The number of future time steps (or data points) the model is expected to predict.
+        type: int
+      num_samples: 
+        type: int
+        description: The number of forecast samples to generate for each future time step. A higher number of samples allows the model to capture prediction uncertainty and generate probabilistic forecasts. Each sample represents one possible realization of the future, and multiple samples can be aggregated (e.g., to compute prediction intervals).
+  output_format:
+    description: The predicted future values for each of the specified field_names based on the provided time-series data. For each field_name, the result is an array consisting of multiple prediction samples, where each sample contains the predicted values for the upcoming time steps. 
+    type: json
+    additional_description: Output is a json with many keys corresponding to provided field_names, and the values are the results of `num_samples` predictions, each prediction includes `prediction_length` time steps.
+    examples:
+      {
+        'Taker buy base asset volume': [
+          [1079914.75, 2258003.5], 
+          [1352620.5, 1996206.0], 
+          [1178088.75, 1701683.75], 
+          [1178088.75, 1778041.5],
+           [1287171.125, 1941665.0]
+        ], 
+        'open': [
+          [0.251971572637558, 0.257449209690094], 
+          [0.25562334060668945, 0.26110097765922546], 
+          [0.2373645305633545, 0.2428421825170517], 
+          [0.2483198195695877, 0.25014570355415344], 
+          [0.25014570355415344, 0.2684045135974884]]
+      }
+
+dataset_description:
+  description: >
+    Crypto Coin Historical Data (2018-2025). A dataset containing cryptocurrency historical price data across multiple timeframes. Designed to provide a standardized, easily accessible dataset for cryptocurrency research and algorithmic trading development. This dataset is automatically updated daily using the Binance API, ensuring that it remains current and relevant for users. Last updated on 2025-05-11 00:17:48.
+  data_source: ./data/cryptocoin.csv
+  data_format:
+    Open time: Timestamp marking the start of the interval
+    open: Opening price of Bitcoin for the interval
+    high: Highest price during the interval
+    low: Lowest price during the interval
+    close: Closing price of Bitcoin for the interval
+    volume: Trading volume of Bitcoin during the interval
+    Close time: Timestamp marking the end of the interval
+    Quote asset volume: Total quote asset (USDT) volume traded during the interval
+    Number of trades: Number of trades executed within the interval
+    Taker buy base asset volume: Volume of Bitcoin bought by takers
+    Taker buy quote asset volume: Volume of USDT spent by takers
+    Ignore: Placeholder column from Binance API (unused in analysis)
