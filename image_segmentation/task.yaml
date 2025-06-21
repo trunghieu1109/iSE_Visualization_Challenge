@@ -1,0 +1,50 @@
+task_description:
+  type: Image segmentation
+  description: |
+    Given an image, this task aims to segment the image into different classes.
+    The model will return a segmented image.
+    The segmented image returned by the model is a 2D array of the segmented image.
+    Overall task is to create a visualization UI to allow users to upload images and visualize the segmented image.
+
+  input_description: A single image used for segmentation needed to be converted to base64 format to upload to the model.
+  output_description: The segmented image is a 2D array of the segmented image.
+
+  visualize:
+    description: |
+      The visualization of the image and the segmented image. Each data item includes:
+      - The input image
+      - The segmented image
+    features:
+      - list_display:
+          description: Show a list of input data and their segmented image.
+          fields:
+            - input_image: The input image.
+            - segmented_image: The segmented image.
+            
+
+model_information:
+  api_url: "http://34.142.220.207:8008/api/image-segmentation"
+  api_method: POST
+  name: mattmdjaga/segformer_b2_clothes
+  description: The model was trained on the Clothes dataset.
+  parameters:
+    image_size: 1024
+  input_format:
+    type: json
+    structure:
+      data:
+        type: string
+        format: base64
+        encoding: UTF-8
+        description: The input image in base64 format.
+        
+  output_format:
+    type: array
+    description: The output is a segmented image represented by an array.
+    guidance: Should convert segmented image to an numpy array to handle the output.
+
+dataset_description:
+  description: The dataset is a collection of images and their segmented images.
+  data_source: The dataset is stored in the ./data folder.
+  read_data: Load the image data from the ./data folder.
+  supported_formats: jpg, jpeg, png

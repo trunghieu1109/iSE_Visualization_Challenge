@@ -1,0 +1,76 @@
+task_description:
+  type: Object detection in video
+  description: |
+    Given a video, this task aims to detect the object in the video.
+    The model will return a video with the bounding box of the object in the video.
+    The bounding box returned by the model is a list of bounding boxes of the object in the video.
+    Overall task is to create a visualization UI to allow users to upload videos and visualize the bounding box of the object in the video.
+  input_description: A single video used for object detection needed to be breaked into frames and converted to base64 format to upload the frames one by one to the model.
+  output_description: With each frame, the model will return bounding boxes of the object in the image.
+
+  visualize:
+    description: |
+      The visualization of the video and the bounding box of the object in the video. Each data item includes:
+      - The input video
+      - The video with the bounding box of the object in the video
+      - The predicted class of the object in the video
+    features:
+      - list_display:
+          description: Show a list of input data and their prediction results.
+          fields:
+            - input_video: The input video.
+            - predicted_bounding_box: The predicted bounding box of the object in the video.
+            - predicted_class: The predicted class of the object in the video.
+      - input_function:
+          description: Allow users to enter new videos for object detection.
+          steps:
+            - Enter a list of videos.
+            - Display the prediction result (bounding box, class).
+            
+model_information:
+  api_url: "http://34.142.220.207:8008/api/object-detect"
+  api_method: POST
+  name: ultralytics/yolo11
+  description: The model was trained on the COCO dataset.
+  architectures: YOLO
+  input_format:
+    type: json
+    structure:
+      data:
+        type: base64
+        encoding: UTF-8
+        description: The input is a base64 encoded image.
+    guidance: Break the video into frames and convert to base64 format. Just upload the frames one by one to the model.
+
+  output_format:
+    description: The output is a list of objects with the properties class, class_name, confidence, bbox.
+    type: object
+    items:
+      type: object
+      properties:
+        class:
+          type: integer
+          description: "ID of class"
+        class_name:
+          type: string
+          description: "Name of class"
+        confidence:
+          type: float
+          description: "Confidence score"
+        bbox:
+          type: array
+          items:
+            type: float
+          description: "Bounding box coordinates [x1, y1, x2, y2]"
+          example: [100.5, 200.3, 300.7, 400.2]
+    guidance: Just return the bounding box of a frame in the video.
+
+
+
+dataset_description:
+  description: The dataset is a collection of videos and their object detection results.
+  data_source: The dataset is stored in the ./data folder.
+  read_data: Load the video data from the ./data folder.
+  supported_formats: mp4, avi, mov
+
+

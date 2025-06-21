@@ -1,0 +1,78 @@
+task_description:
+  type: Keypoint detection
+  description: |
+    Given a video, this task aims to detect the keypoints of the video.
+    The model will return a video with the keypoints of the video.
+    The video focus on the human body.
+    The keypoints returned by the model is a list of keypoints of the video.
+    Overall task is to create a visualization UI to allow users to upload videos and visualize the keypoints.
+  input_description: A single video used for keypoint detection needed to be breaked into frames and converted to base64 format to upload the frames one by one to the model.
+  output_description: With each frame, the model will return a list of keypoints of the frame.
+
+  visualize:
+    description: |
+      The visualization of the video and the keypoints. Each data item includes:
+      - The input video
+      - The video with the keypoints
+
+    features:
+      - list_display:
+          description: Show a list of input data and their keypoints.
+          fields:
+            - input_video: The input video.
+            - keypoints: The keypoints.
+      - input_function:
+          description: Allow users to enter new videos for keypoint detection.
+          steps:
+            - Enter a list of videos.
+            - Display the keypoints.
+
+model_information:
+  api_url: "http://34.142.220.207:8008/api/keypoint-detection"
+  api_method: POST
+  name: usyd-community/vitpose-base-simple
+  description: "Detect the keypoints of the image."
+  architectures: "Keypoint detection"
+  input_format:
+    type: json
+    structure:
+      data:
+        type: base64
+        encoding: UTF-8
+        description: The input is a base64 encoded image.
+    guidance: Break the video into frames and convert to base64 format. Just upload the frames one by one to the model.
+
+  output_format:
+    description: "List of detected persons"
+    type: array
+    items:
+      type: array
+      description: "List of keypoints for each person"
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: "Name of the keypoint (e.g., L_Shoulder, R_Shoulder, etc.)"
+            example: "L_Shoulder"
+          x:
+            type: float
+            description: "X coordinate of the keypoint"
+            example: 100.5
+          y:
+            type: float
+            description: "Y coordinate of the keypoint"
+            example: 200.3
+          score:
+            type: float
+            description: "Confidence score of the keypoint detection"
+            example: 0.95
+    guidance: Just return the keypoints of a frame in the video.
+
+dataset_description:
+  description: The dataset is a collection of images and their keypoints.
+  data_source: The dataset is stored in the ./data folder.
+  read_data: Load the image data from the ./data folder.
+  supported_formats: jpg, jpeg, png
+
+

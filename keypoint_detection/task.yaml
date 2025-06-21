@@ -1,0 +1,77 @@
+task_description:
+  type: Keypoint detection
+  description: |
+    Given an image, this task aims to detect the keypoints of the image.
+    The model will return a list of keypoints of the image.
+    The image focus on the human body.
+    The keypoints returned by the model is a list of keypoints of the image.
+    Overall task is to create a visualization UI to allow users to upload images and visualize the keypoints.
+
+  input_description: A single image used for keypoint detection needed to be converted to base64 format to upload to the model. 
+  output_description: The keypoints of the image is a list of keypoints of the image. You need to connect the keypoints to the image.
+
+  visualize:
+    description: |
+      The visualization of the image and the keypoints. Each data item includes:
+      - The input image
+      - The keypoints
+
+    features:
+      - list_display:
+          description: Show a list of input data and their keypoints.
+          fields:
+            - input_image: The input image.
+            - keypoints: The keypoints.
+      - input_function:
+          description: Allow users to enter new images for keypoint detection.
+          steps:
+            - Enter a list of images.
+            - Display the keypoints.
+
+model_information:
+  api_url: "http://34.142.220.207:8008/api/keypoint-detection"
+  api_method: POST
+  name: usyd-community/vitpose-base-simple
+  description: "Detect the keypoints of the image."
+  architectures: "Keypoint detection"
+  input_format:
+    type: json
+    structure:
+      data:
+        type: base64
+        encoding: UTF-8
+        description: The input is a base64 encoded image.
+
+  output_format:
+    description: "List of detected persons"
+    type: array
+    items:
+      type: array
+      description: "List of keypoints for each person"
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: "Name of the keypoint (e.g., L_Shoulder, R_Shoulder, etc.)"
+            example: "L_Shoulder"
+          x:
+            type: float
+            description: "X coordinate of the keypoint"
+            example: 100.5
+          y:
+            type: float
+            description: "Y coordinate of the keypoint"
+            example: 200.3
+          score:
+            type: float
+            description: "Confidence score of the keypoint detection"
+            example: 0.95
+
+dataset_description:
+  description: The dataset is a collection of images and their keypoints.
+  data_source: The dataset is stored in the ./data folder.
+  read_data: Load the image data from the ./data folder.
+  supported_formats: jpg, jpeg, png
+
+

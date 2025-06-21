@@ -1,0 +1,53 @@
+task_description:
+  type: Depth estimation
+  description: |
+    Given images, this task aims to estimate the depth of the image.
+    The model will return a depth map of the image.
+    The depth map returned by the model is a 2D array of the depth values of the image.
+    Overall task is to create a visualization UI to allow users to upload images and visualize the depth map.
+
+  input_description: A single image used for depth estimation needed to be converted to base64 format to upload to the model.
+  output_description: The depth of the image is a 2D array of the depth values of the image.
+
+  visualize:
+    description: |
+      The visualization of the image and the depth map. Each data item includes:
+      - The input image
+      - The depth map
+    features:
+      - list_display:
+          description: Show a list of input data and their depth map.
+          fields:
+            - input_image: The input image.
+            - depth_map: The depth map.
+      - input_function:
+          description: Allow users to enter new images for depth estimation.
+          steps:
+            - Enter a list of images.
+            - Display the depth map.
+
+model_information:
+  api_url: "http://34.142.220.207:8008/api/depth-estimation"
+  api_method: POST
+  name: depth-anything/Depth-Anything-V2-Small-hf
+  description: Estimate the depth of the image.
+  input_format:
+    type: json
+    strucutre:
+      data:
+        type: string
+        format: base64
+        encoding: UTF-8
+        description: The input image in base64 format.
+
+  output_format:
+    type: array
+    description: The output is a depth map represented by an array.
+    guidance: Should convert depth map to an numpy array to handle the output.
+    
+dataset_description:
+  description: The dataset is a collection of images.
+  data_source: The dataset is stored in the ./data folder.
+  read_data: Load the image data from the ./data folder.
+  supported_formats: jpg, jpeg, png
+
